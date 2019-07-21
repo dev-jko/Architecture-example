@@ -3,7 +3,6 @@ package com.nadarm.boardmvvmrx.presentation.viewModel
 import android.app.Application
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
-import com.nadarm.boardmvvmrx.BasicApp
 import com.nadarm.boardmvvmrx.domain.model.Article
 import com.nadarm.boardmvvmrx.domain.useCase.DeleteArticle
 import io.reactivex.Observable
@@ -12,6 +11,7 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 interface DeleteViewModel {
 
@@ -26,7 +26,8 @@ interface DeleteViewModel {
     }
 
     class ViewModel(application: Application) : AndroidViewModel(application), Inputs, Outputs {
-        private val deleteArticleUseCase: DeleteArticle by lazy { DeleteArticle((application as BasicApp).getRepository()) }
+        @Inject
+        lateinit var deleteArticleUseCase: DeleteArticle
 
         private val article: PublishSubject<Article> = PublishSubject.create()
         private val deleteClicked: PublishSubject<Unit> = PublishSubject.create()
