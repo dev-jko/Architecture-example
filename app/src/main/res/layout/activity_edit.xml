@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+>
+    <data>
+        <variable name="editVm" type="com.nadarm.boardmvvmrx.presentation.viewModel.EditViewModel.ViewModel"/>
+        <variable name="detailVm" type="com.nadarm.boardmvvmrx.presentation.viewModel.DetailViewModel.ViewModel"/>
+    </data>
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".presentation.view.EditActivity" android:orientation="vertical">
+
+        <EditText
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp" android:id="@+id/edit_title_et"/>
+        <EditText
+                android:layout_weight="6"
+                android:layout_width="match_parent"
+                android:layout_height="0dp" android:id="@+id/edit_content_et"/>
+    </LinearLayout>
+</layout>
