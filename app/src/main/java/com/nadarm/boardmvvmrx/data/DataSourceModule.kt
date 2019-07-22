@@ -10,29 +10,29 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Module
-class LocalDataModule {
+class DataSourceModule {
 
     @Singleton
     @Provides
-    fun providesArticleLocalMapper(): ArticleLocalMapper {
+    fun provideArticleLocalMapper(): ArticleLocalMapper {
         return ArticleLocalMapper
     }
 
     @Singleton
     @Provides
-    fun providesArticleDatabase(application: Application): ArticleDatabase {
+    fun provideArticleDatabase(application: Application): ArticleDatabase {
         return ArticleDatabase.getInstance(application)
     }
 
     @Singleton
     @Provides
-    fun providesArticleDao(articleDatabase: ArticleDatabase): ArticleDao {
+    fun provideArticleDao(articleDatabase: ArticleDatabase): ArticleDao {
         return articleDatabase.articleDao()
     }
 
     @Singleton
     @Provides
-    fun providesArticleRemoteDataSource(): ArticleRemoteDataSource {
+    fun provideArticleRemoteDataSource(): ArticleRemoteDataSource {
         return ArticleRemoteDataSource
     }
 
