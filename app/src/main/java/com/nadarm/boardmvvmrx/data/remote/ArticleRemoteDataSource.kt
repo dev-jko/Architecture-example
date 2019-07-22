@@ -5,7 +5,7 @@ import com.nadarm.boardmvvmrx.domain.model.Article
 import io.reactivex.Flowable
 import io.reactivex.Single
 
-object ArticleRemoteDataSource : ArticleDataSource {
+object ArticleRemoteDataSource : ArticleDataSource.Remote{
     override fun getAllArticles(): Flowable<List<Article>> {
         // TODO
         return Flowable.empty()
