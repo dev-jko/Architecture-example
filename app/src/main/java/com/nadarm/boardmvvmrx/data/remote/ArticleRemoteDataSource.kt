@@ -1,11 +1,11 @@
 package com.nadarm.boardmvvmrx.data.remote
 
-import com.nadarm.boardmvvmrx.data.ArticleDataSource
 import com.nadarm.boardmvvmrx.domain.model.Article
+import com.nadarm.boardmvvmrx.domain.repository.ArticleRepository
 import io.reactivex.Flowable
 import io.reactivex.Single
 
-object ArticleRemoteDataSource : ArticleDataSource.Remote{
+object ArticleRemoteDataSource : ArticleRepository {
     override fun getAllArticles(): Flowable<List<Article>> {
         // TODO
         return Flowable.empty()
