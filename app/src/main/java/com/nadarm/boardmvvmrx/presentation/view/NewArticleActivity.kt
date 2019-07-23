@@ -7,14 +7,19 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import com.nadarm.boardmvvmrx.AppModule
+import com.nadarm.boardmvvmrx.DaggerAppComponent
 import com.nadarm.boardmvvmrx.R
+import com.nadarm.boardmvvmrx.data.DataSourceModule
 import com.nadarm.boardmvvmrx.databinding.ActivityNewArticleBinding
-import com.nadarm.boardmvvmrx.util.addTextChanged
 import com.nadarm.boardmvvmrx.presentation.viewModel.NewArticleViewModel
+import com.nadarm.boardmvvmrx.util.addTextChanged
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
+import javax.inject.Inject
 
 class NewArticleActivity : AppCompatActivity() {
 
@@ -23,11 +28,19 @@ class NewArticleActivity : AppCompatActivity() {
     private val binding: ActivityNewArticleBinding by lazy {
         DataBindingUtil.setContentView<ActivityNewArticleBinding>(this, R.layout.activity_new_article)
     }
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val vm = ViewModelProviders.of(this).get(NewArticleViewModel.ViewModel::class.java)
+        DaggerAppComponent.builder()
+            .appModule(AppModule(application))
+            .dataSourceModule(DataSourceModule())
+            .build()
+            .inject(this)
+
+        val vm = ViewModelProviders.of(this, viewModelFactory).get(NewArticleViewModel.ViewModelImpl::class.java)
         binding.vm = vm
         binding.lifecycleOwner = this
 

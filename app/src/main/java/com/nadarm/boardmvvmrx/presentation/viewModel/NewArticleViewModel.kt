@@ -1,8 +1,7 @@
 package com.nadarm.boardmvvmrx.presentation.viewModel
 
-import android.app.Application
 import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import com.nadarm.boardmvvmrx.domain.model.Article
 import com.nadarm.boardmvvmrx.domain.useCase.InsertArticle
 import io.reactivex.Observable
@@ -27,9 +26,9 @@ interface NewArticleViewModel {
         fun startDetailActivity(): Observable<Long>
     }
 
-    class ViewModel(application: Application) : AndroidViewModel(application), Inputs, Outputs {
-        @Inject
-        lateinit var insertArticleUseCase: InsertArticle
+    class ViewModelImpl @Inject constructor(
+        private val insertArticleUseCase: InsertArticle
+    ) : ViewModel(), Inputs, Outputs {
 
         private val titleChanged: PublishSubject<String> = PublishSubject.create()
         private val contentChanged: PublishSubject<String> = PublishSubject.create()
