@@ -1,7 +1,8 @@
 package com.nadarm.boardmvvmrx.presentation.viewModel
 
+import android.app.Application
 import android.content.Intent
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import com.nadarm.boardmvvmrx.domain.model.Article
 import com.nadarm.boardmvvmrx.domain.useCase.GetArticle
 import io.reactivex.BackpressureStrategy
@@ -27,9 +28,9 @@ interface DetailViewModel {
         fun startEditActivity(): Observable<Long>
     }
 
-    class ViewModelImpl @Inject constructor(
-        private val getArticleUseCase: GetArticle
-    ) : ViewModel(), Inputs, Outputs {
+    class ViewModel(application: Application) : AndroidViewModel(application), Inputs, Outputs {
+        @Inject
+        lateinit var getArticleUseCase: GetArticle
 
         private val intent: PublishSubject<Intent> = PublishSubject.create()
         private val editClicked: PublishSubject<Unit> = PublishSubject.create()

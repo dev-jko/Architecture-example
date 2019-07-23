@@ -1,6 +1,10 @@
 package com.nadarm.boardmvvmrx.presentation.viewModel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import com.nadarm.boardmvvmrx.AppModule
+import com.nadarm.boardmvvmrx.DaggerAppComponent
+import com.nadarm.boardmvvmrx.data.DataSourceModule
 import com.nadarm.boardmvvmrx.domain.model.Article
 import com.nadarm.boardmvvmrx.domain.useCase.GetArticles
 import com.nadarm.boardmvvmrx.presentation.view.adapter.ArticleAdapter
@@ -21,13 +25,14 @@ interface ListViewModel {
         fun startNewArticleActivity(): Observable<Boolean>
     }
 
-    class ViewModelImpl @Inject constructor(
-        private val getArticlesUseCase: GetArticles
-    ) : ViewModel(), Inputs, Outputs {
+    class ViewModel(application: Application) : AndroidViewModel(application), Inputs, Outputs {
+        @Inject
+        lateinit var getArticlesUseCase: GetArticles
+
         private val articleClicked: PublishSubject<Article> = PublishSubject.create()
         private val newArticleClicked: PublishSubject<Boolean> = PublishSubject.create()
 
-        private val articles: Flowable<List<Article>> = this.getArticlesUseCase.execute(Unit)
+        private val articles: Flowable<List<Article>>
         private val startDetailActivity: Observable<Article> =
             articleClicked.throttleFirst(500, TimeUnit.MILLISECONDS)
         private val startNewArticleActivity: Observable<Boolean> =
@@ -35,6 +40,16 @@ interface ListViewModel {
 
         val inputs: Inputs = this
         val outputs: Outputs = this
+
+        init {
+            DaggerAppComponent.builder()
+                .appModule(AppModule(application))
+                .dataSourceModule(DataSourceModule())
+                .build()
+                .inject(this)
+
+            this.articles = this.getArticlesUseCase.execute(Unit)
+        }
 
         override fun articles(): Flowable<List<Article>> = this.articles
         override fun startDetailActivity(): Observable<Article> = this.startDetailActivity
