@@ -1,8 +1,7 @@
 package com.nadarm.boardmvvmrx.presentation.viewModel
 
-import android.app.Application
 import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import com.nadarm.boardmvvmrx.domain.model.Article
 import com.nadarm.boardmvvmrx.domain.useCase.DeleteArticle
 import io.reactivex.Observable
@@ -25,9 +24,9 @@ interface DeleteViewModel {
         fun makeToast(): Observable<Pair<String, Int>>
     }
 
-    class ViewModel(application: Application) : AndroidViewModel(application), Inputs, Outputs {
-        @Inject
-        lateinit var deleteArticleUseCase: DeleteArticle
+    class ViewModelImpl @Inject constructor(
+        private val deleteArticleUseCase: DeleteArticle
+    ) : ViewModel(), Inputs, Outputs {
 
         private val article: PublishSubject<Article> = PublishSubject.create()
         private val deleteClicked: PublishSubject<Unit> = PublishSubject.create()
