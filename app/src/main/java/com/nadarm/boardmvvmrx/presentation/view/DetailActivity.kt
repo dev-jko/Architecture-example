@@ -7,14 +7,19 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import com.nadarm.boardmvvmrx.AppModule
+import com.nadarm.boardmvvmrx.DaggerAppComponent
 import com.nadarm.boardmvvmrx.R
+import com.nadarm.boardmvvmrx.data.DataSourceModule
 import com.nadarm.boardmvvmrx.databinding.ActivityDetailBinding
 import com.nadarm.boardmvvmrx.presentation.viewModel.DeleteViewModel
 import com.nadarm.boardmvvmrx.presentation.viewModel.DetailViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
+import javax.inject.Inject
 
 class DetailActivity : AppCompatActivity() {
 
@@ -22,13 +27,20 @@ class DetailActivity : AppCompatActivity() {
     private val binding: ActivityDetailBinding by lazy {
         DataBindingUtil.setContentView<ActivityDetailBinding>(this, R.layout.activity_detail)
     }
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val detailVm = ViewModelProviders.of(this).get(DetailViewModel.ViewModel::class.java)
-        val deleteVm = ViewModelProviders.of(this).get(DeleteViewModel.ViewModel::class.java)
+        DaggerAppComponent.builder()
+            .appModule(AppModule(application))
+            .dataSourceModule(DataSourceModule())
+            .build()
+            .inject(this)
 
+        val detailVm = ViewModelProviders.of(this, viewModelFactory).get(DetailViewModel.ViewModelImpl::class.java)
+        val deleteVm = ViewModelProviders.of(this, viewModelFactory).get(DeleteViewModel.ViewModelImpl::class.java)
 
         binding.detailVm = detailVm
         binding.deleteVm = deleteVm

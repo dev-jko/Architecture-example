@@ -6,15 +6,20 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import com.nadarm.boardmvvmrx.AppModule
+import com.nadarm.boardmvvmrx.DaggerAppComponent
 import com.nadarm.boardmvvmrx.R
+import com.nadarm.boardmvvmrx.data.DataSourceModule
 import com.nadarm.boardmvvmrx.databinding.ActivityEditBinding
-import com.nadarm.boardmvvmrx.util.addTextChanged
 import com.nadarm.boardmvvmrx.presentation.viewModel.DetailViewModel
 import com.nadarm.boardmvvmrx.presentation.viewModel.EditViewModel
+import com.nadarm.boardmvvmrx.util.addTextChanged
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
+import javax.inject.Inject
 
 class EditActivity : AppCompatActivity() {
 
@@ -22,11 +27,20 @@ class EditActivity : AppCompatActivity() {
     private val binding: ActivityEditBinding by lazy {
         DataBindingUtil.setContentView<ActivityEditBinding>(this, R.layout.activity_edit)
     }
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val detailVm = ViewModelProviders.of(this).get(DetailViewModel.ViewModel::class.java)
-        val editVm = ViewModelProviders.of(this).get(EditViewModel.ViewModel::class.java)
+
+        DaggerAppComponent.builder()
+            .appModule(AppModule(application))
+            .dataSourceModule(DataSourceModule())
+            .build()
+            .inject(this)
+
+        val detailVm = ViewModelProviders.of(this, viewModelFactory).get(DetailViewModel.ViewModelImpl::class.java)
+        val editVm = ViewModelProviders.of(this, viewModelFactory).get(EditViewModel.ViewModelImpl::class.java)
         binding.detailVm = detailVm
         binding.editVm = editVm
         binding.lifecycleOwner = this
