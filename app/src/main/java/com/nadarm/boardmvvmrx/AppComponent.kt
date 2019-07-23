@@ -2,13 +2,12 @@ package com.nadarm.boardmvvmrx
 
 import android.app.Application
 import com.nadarm.boardmvvmrx.data.ArticleDataRepository
-import com.nadarm.boardmvvmrx.data.ArticleDataSource
 import com.nadarm.boardmvvmrx.data.LocalDataModule
-import com.nadarm.boardmvvmrx.data.RepositoryModule
 import com.nadarm.boardmvvmrx.data.local.ArticleDao
 import com.nadarm.boardmvvmrx.data.local.ArticleDatabase
 import com.nadarm.boardmvvmrx.data.local.ArticleLocalDataSource
 import com.nadarm.boardmvvmrx.data.remote.ArticleRemoteDataSource
+import com.nadarm.boardmvvmrx.data.RepositoryModule
 import com.nadarm.boardmvvmrx.domain.repository.ArticleRepository
 import com.nadarm.boardmvvmrx.domain.useCase.*
 import dagger.Component
@@ -20,12 +19,8 @@ interface AppComponent {
 
     fun articleDao(): ArticleDao
     fun articleDatabase(): ArticleDatabase
-    fun articleLocalDataSourceImpl(): ArticleLocalDataSource
-    fun articleRemoteDataSourceImpl(): ArticleRemoteDataSource
-
-    fun articleLocalDataSource(): ArticleDataSource.Local
-    fun articleRemoteDataSource(): ArticleDataSource.Remote
-
+    fun articleLocalDataSource(): ArticleLocalDataSource
+    fun articleRemoteDataSource(): ArticleRemoteDataSource
     fun articleDataRepository(): ArticleDataRepository
     fun articleRepository(): ArticleRepository
 

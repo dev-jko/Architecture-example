@@ -12,7 +12,7 @@ import javax.inject.Singleton
 class ArticleLocalDataSource @Inject constructor(
     private val articleDao: ArticleDao,
     private val mapper: ArticleLocalMapper
-) : ArticleDataSource.Local {
+) : ArticleDataSource {
 
     override fun getAllArticles(): Flowable<List<Article>> {
         return articleDao.getAllArticles()

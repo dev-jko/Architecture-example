@@ -10,8 +10,8 @@ import javax.inject.Singleton
 
 @Singleton
 class ArticleDataRepository @Inject constructor(
-    private val articleLocalDataSource: ArticleDataSource.Local,
-    private val articleRemoteDataSource: ArticleDataSource.Remote
+    private val articleLocalDataSource: ArticleDataSource,
+    private val articleRemoteDataSource: ArticleDataSource
 ) : ArticleRepository {
 
     override fun getAllArticles(): Flowable<List<Article>> {
