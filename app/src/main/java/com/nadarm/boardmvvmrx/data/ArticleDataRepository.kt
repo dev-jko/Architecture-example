@@ -5,14 +5,12 @@ import com.nadarm.boardmvvmrx.domain.repository.ArticleRepository
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class ArticleDataRepository @Inject constructor(
-    private val articleLocalDataSource: ArticleDataSource,
-    private val articleRemoteDataSource: ArticleDataSource
+class ArticleDataRepository private constructor(
+    private val articleLocalDataSource: ArticleRepository,
+    private val articleRemoteDataSource: ArticleRepository
 ) : ArticleRepository {
+
 
     override fun getAllArticles(): Flowable<List<Article>> {
         return articleLocalDataSource.getAllArticles().subscribeOn(Schedulers.io())
@@ -37,6 +35,26 @@ class ArticleDataRepository @Inject constructor(
     override fun deleteArticle(article: Article): Single<Int> {
         // TODO add remote
         return articleLocalDataSource.deleteArticle(article).subscribeOn(Schedulers.io())
+    }
+
+    companion object {
+        private var INSTANCE: ArticleDataRepository? = null
+
+        fun getInstance(
+            articleLocalDataSource: ArticleRepository,
+            articleRemoteDataSource: ArticleRepository
+        ): ArticleDataRepository {
+            if (INSTANCE == null) {
+                synchronized(this) {
+                    INSTANCE =
+                        ArticleDataRepository(
+                            articleLocalDataSource,
+                            articleRemoteDataSource
+                        )
+                }
+            }
+            return INSTANCE!!
+        }
     }
 
 }

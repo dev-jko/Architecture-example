@@ -3,15 +3,15 @@ package com.nadarm.boardmvvmrx.presentation.viewModel
 import android.app.Application
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
+import com.nadarm.boardmvvmrx.data.ArticleDataRepository
+import com.nadarm.boardmvvmrx.BasicApp
 import com.nadarm.boardmvvmrx.domain.model.Article
-import com.nadarm.boardmvvmrx.domain.useCase.InsertArticle
 import io.reactivex.Observable
 import io.reactivex.functions.Function3
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 interface NewArticleViewModel {
 
@@ -28,8 +28,7 @@ interface NewArticleViewModel {
     }
 
     class ViewModel(application: Application) : AndroidViewModel(application), Inputs, Outputs {
-        @Inject
-        lateinit var insertArticleUseCase: InsertArticle
+        private val repository: ArticleDataRepository by lazy { (application as BasicApp).getRepository() }
 
         private val titleChanged: PublishSubject<String> = PublishSubject.create()
         private val contentChanged: PublishSubject<String> = PublishSubject.create()
@@ -50,7 +49,7 @@ interface NewArticleViewModel {
                     this.contentChanged,
                     Function3 { _, title, content -> Article(title, content) }
                 )
-                .flatMapSingle(insertArticleUseCase::execute)
+                .flatMapSingle(repository::insertArticle)
                 .subscribeOn(Schedulers.io())
                 .share()
 

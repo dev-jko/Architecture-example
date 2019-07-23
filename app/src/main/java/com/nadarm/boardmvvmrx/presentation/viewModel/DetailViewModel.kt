@@ -3,8 +3,9 @@ package com.nadarm.boardmvvmrx.presentation.viewModel
 import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
+import com.nadarm.boardmvvmrx.BasicApp
+import com.nadarm.boardmvvmrx.data.ArticleDataRepository
 import com.nadarm.boardmvvmrx.domain.model.Article
-import com.nadarm.boardmvvmrx.domain.useCase.GetArticle
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.Observable
@@ -13,7 +14,6 @@ import io.reactivex.processors.BehaviorProcessor
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
-import javax.inject.Inject
 
 
 interface DetailViewModel {
@@ -29,8 +29,7 @@ interface DetailViewModel {
     }
 
     class ViewModel(application: Application) : AndroidViewModel(application), Inputs, Outputs {
-        @Inject
-        lateinit var getArticleUseCase: GetArticle
+        private val repository: ArticleDataRepository by lazy { (application as BasicApp).getRepository() }
 
         private val intent: PublishSubject<Intent> = PublishSubject.create()
         private val editClicked: PublishSubject<Unit> = PublishSubject.create()
@@ -48,7 +47,7 @@ interface DetailViewModel {
 
             articleIdObservable
                 .toFlowable(BackpressureStrategy.LATEST)
-                .flatMap(getArticleUseCase::execute)
+                .flatMap { repository.getArticle(it) }
                 .subscribe(this.article)
 
             this.editClicked
