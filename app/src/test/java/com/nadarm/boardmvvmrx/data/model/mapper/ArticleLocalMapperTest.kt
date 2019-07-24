@@ -9,6 +9,10 @@ import org.junit.Test
 class ArticleLocalMapperTest {
 
     private lateinit var mapper: ArticleLocalMapper
+    private val title1 = "title1"
+    private val title2 = "title2"
+    private val content1 = "content1"
+    private val content2 = "content2"
 
     @Before
     fun setUp() {
@@ -17,7 +21,7 @@ class ArticleLocalMapperTest {
 
     @Test
     fun `test map from data`() {
-        val articleData = ArticleData(1, "title", "content")
+        val articleData = ArticleData(1, title1, content1)
         val article = mapper.mapFromData(articleData)
 
         assertArticle(articleData, article)
@@ -26,8 +30,8 @@ class ArticleLocalMapperTest {
     @Test
     fun `test map from data list`() {
         val articleDataList = listOf(
-            ArticleData(1, "title", "content"),
-            ArticleData(2, "title2", "content2")
+            ArticleData(1, title1, content1),
+            ArticleData(2, title2, content2)
         )
         val articleList = mapper.mapFromData(articleDataList)
 
@@ -37,7 +41,7 @@ class ArticleLocalMapperTest {
 
     @Test
     fun `test map to data`() {
-        val article = Article(1, "title", "content")
+        val article = Article(1, title1, content1)
         val articleData = mapper.mapToData(article)
 
         assertArticle(articleData, article)
@@ -46,8 +50,8 @@ class ArticleLocalMapperTest {
     @Test
     fun `test map to data list`() {
         val articleList = listOf(
-            Article(1, "title1", "content1"),
-            Article(2, "title2", "content2")
+            Article(1, title1, content1),
+            Article(2, title2, content2)
         )
         val articleDataList = mapper.mapToData(articleList)
 
