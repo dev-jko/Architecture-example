@@ -61,7 +61,7 @@ class ListActivity : AppCompatActivity() {
             .addTo(compositeDisposable)
         vm.outputs.startNewArticleActivity()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { isStart -> if (isStart) startNewArticleActivity() }
+            .subscribe { startNewArticleActivity() }
             .addTo(compositeDisposable)
 
         binding.floatingActionButton.setOnClickListener { vm.inputs.newArticleClicked() }

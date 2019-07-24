@@ -6,19 +6,27 @@ import io.reactivex.Flowable
 import io.reactivex.Single
 
 @Dao
-interface ArticleDao {
+abstract class ArticleDao {
     @Query("SELECT * FROM articles ORDER BY articleId DESC")
-    fun getAllArticles(): Flowable<List<ArticleData>>
+    protected abstract fun getAllArticles(): Flowable<List<ArticleData>>
+
+    fun getArticlesDistinct(): Flowable<List<ArticleData>> {
+        return this.getAllArticles().distinctUntilChanged()
+    }
 
     @Query("SELECT * FROM articles WHERE articleId = :articleId")
-    fun getArticle(articleId: Long): Flowable<ArticleData>
+    protected abstract fun getArticle(articleId: Long): Flowable<ArticleData>
+
+    fun getArticleDistinct(articleId: Long): Flowable<ArticleData> {
+        return this.getArticle(articleId).distinctUntilChanged()
+    }
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    fun insertArticle(article: ArticleData): Single<Long>
+    abstract fun insertArticle(article: ArticleData): Single<Long>
 
     @Update
-    fun updateArticle(article: ArticleData): Single<Int>
+    abstract fun updateArticle(article: ArticleData): Single<Int>
 
     @Delete
-    fun deleteArticle(article: ArticleData): Single<Int>
+    abstract fun deleteArticle(article: ArticleData): Single<Int>
 }
