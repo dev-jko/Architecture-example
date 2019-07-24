@@ -15,8 +15,12 @@ class ArticleDataRepository @Inject constructor(
 ) : ArticleRepository {
 
     override fun getAllArticles(): Flowable<List<Article>> {
-        return articleLocalDataSource.getAllArticles().subscribeOn(Schedulers.io())
-//        articleRemoteDataSource.getAllArticles()
+        return Flowable.concat(
+            articleLocalDataSource.getAllArticles()
+                .onErrorReturn { emptyList() }
+                .subscribeOn(Schedulers.io()),
+            articleRemoteDataSource.getAllArticles().subscribeOn(Schedulers.io())
+        ).distinctUntilChanged()
     }
 
     override fun getArticle(articleId: Long): Flowable<Article> {
