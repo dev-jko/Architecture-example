@@ -15,12 +15,12 @@ class ArticleLocalDataSource @Inject constructor(
 ) : ArticleDataSource.Local {
 
     override fun getAllArticles(): Flowable<List<Article>> {
-        return articleDao.getAllArticles()
+        return articleDao.getArticlesDistinct()
             .map(mapper::mapFromData)
     }
 
     override fun getArticle(articleId: Long): Flowable<Article> {
-        return articleDao.getArticle(articleId)
+        return articleDao.getArticleDistinct(articleId)
             .map(mapper::mapFromData)
     }
 

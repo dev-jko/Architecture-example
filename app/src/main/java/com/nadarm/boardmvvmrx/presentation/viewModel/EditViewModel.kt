@@ -61,7 +61,7 @@ interface EditViewModel {
             updateObservable
                 .map { "글이 수정됐습니다." to Toast.LENGTH_SHORT }
                 .doOnError { this.makeToast.onNext("수정 실패" to Toast.LENGTH_SHORT) }
-                .subscribe(makeToast)
+                .subscribe(this.makeToast)
 
             updateObservable
                 .delay(600, TimeUnit.MILLISECONDS)
