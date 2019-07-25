@@ -3,7 +3,7 @@ package com.nadarm.boardmvvmrx.data
 import android.app.Application
 import com.nadarm.boardmvvmrx.data.local.ArticleDao
 import com.nadarm.boardmvvmrx.data.local.ArticleDatabase
-import com.nadarm.boardmvvmrx.data.model.mapper.ArticleLocalMapper
+import com.nadarm.boardmvvmrx.data.model.mapper.ArticleDataMapper
 import com.nadarm.boardmvvmrx.data.remote.ArticleRemoteDataSource
 import dagger.Module
 import dagger.Provides
@@ -14,8 +14,8 @@ class DataSourceModule {
 
     @Singleton
     @Provides
-    fun provideArticleLocalMapper(): ArticleLocalMapper {
-        return ArticleLocalMapper
+    fun provideArticleLocalMapper(): ArticleDataMapper {
+        return ArticleDataMapper
     }
 
     @Singleton

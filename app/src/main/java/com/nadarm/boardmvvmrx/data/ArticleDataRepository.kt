@@ -4,10 +4,8 @@ import com.nadarm.boardmvvmrx.AppSchedulers
 import com.nadarm.boardmvvmrx.domain.model.Article
 import com.nadarm.boardmvvmrx.domain.repository.ArticleRepository
 import io.reactivex.Flowable
-import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.schedulers.TestScheduler
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,8 +31,9 @@ class ArticleDataRepository @Inject constructor(
     }
 
     override fun insertArticle(article: Article): Single<Long> {
-        // TODO add remote
-        return articleLocalDataSource.insertArticle(article).subscribeOn(Schedulers.io())
+        // TODO
+        return articleRemoteDataSource.insertArticle(article)
+//        return articleLocalDataSource.insertArticle(article).subscribeOn(Schedulers.io())
     }
 
     override fun updateArticle(article: Article): Single<Int> {

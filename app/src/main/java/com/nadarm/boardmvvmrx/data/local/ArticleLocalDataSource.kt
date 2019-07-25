@@ -1,7 +1,7 @@
 package com.nadarm.boardmvvmrx.data.local
 
 import com.nadarm.boardmvvmrx.data.ArticleDataSource
-import com.nadarm.boardmvvmrx.data.model.mapper.ArticleLocalMapper
+import com.nadarm.boardmvvmrx.data.model.mapper.ArticleDataMapper
 import com.nadarm.boardmvvmrx.domain.model.Article
 import io.reactivex.Flowable
 import io.reactivex.Single
@@ -11,7 +11,7 @@ import javax.inject.Singleton
 @Singleton
 class ArticleLocalDataSource @Inject constructor(
     private val articleDao: ArticleDao,
-    private val mapper: ArticleLocalMapper
+    private val mapper: ArticleDataMapper
 ) : ArticleDataSource.Local {
 
     override fun getAllArticles(): Flowable<List<Article>> {
