@@ -1,5 +1,6 @@
 package com.nadarm.boardmvvmrx.presentation.viewModel
 
+import com.nadarm.boardmvvmrx.AppSchedulers
 import com.nadarm.boardmvvmrx.domain.model.Article
 import com.nadarm.boardmvvmrx.domain.useCase.GetArticles
 import io.reactivex.Flowable
@@ -24,10 +25,14 @@ class ListViewModelTest {
         Article(2, "title2", "content2")
     )
     private val compositeDisposable = CompositeDisposable()
+    private val schedulers: AppSchedulers = mock(AppSchedulers::class.java)
 
     @Before
     fun setUp() {
         testScheduler = TestScheduler()
+        `when`(schedulers.ui()).thenReturn(testScheduler)
+        `when`(schedulers.io()).thenReturn(testScheduler)
+        `when`(schedulers.computation()).thenReturn(testScheduler)
     }
 
     @After
@@ -38,7 +43,7 @@ class ListViewModelTest {
     @Test
     fun `test get articles success`() {
         `when`(useCase.execute(Unit)).thenReturn(Flowable.just(articles))
-        listViewModel = ListViewModel.ViewModelImpl(useCase, testScheduler)
+        listViewModel = ListViewModel.ViewModelImpl(useCase, schedulers)
 
         val test = listViewModel.outputs.articles().test()
 
@@ -55,7 +60,7 @@ class ListViewModelTest {
     @Test
     fun `test get articles success whit no articles`() {
         `when`(useCase.execute(Unit)).thenReturn(Flowable.just(emptyList()))
-        listViewModel = ListViewModel.ViewModelImpl(useCase, testScheduler)
+        listViewModel = ListViewModel.ViewModelImpl(useCase, schedulers)
 
         val test = listViewModel.outputs.articles().test()
 
@@ -73,7 +78,7 @@ class ListViewModelTest {
     fun `test get articles fail`() {
         val throwable = Throwable()
         `when`(useCase.execute(Unit)).thenReturn(Flowable.error(throwable))
-        listViewModel = ListViewModel.ViewModelImpl(useCase, testScheduler)
+        listViewModel = ListViewModel.ViewModelImpl(useCase, schedulers)
 
         val test = listViewModel.outputs.articles().test()
 
@@ -89,7 +94,7 @@ class ListViewModelTest {
 
     @Test
     fun `test article clicked`() {
-        listViewModel = ListViewModel.ViewModelImpl(useCase, testScheduler)
+        listViewModel = ListViewModel.ViewModelImpl(useCase, schedulers)
         val article = articles[0]
         val testObserver = TestObserver<Article>()
 
@@ -122,7 +127,7 @@ class ListViewModelTest {
 
     @Test
     fun `test new article clicked`() {
-        listViewModel = ListViewModel.ViewModelImpl(useCase, testScheduler)
+        listViewModel = ListViewModel.ViewModelImpl(useCase, schedulers)
         val testObserver = TestObserver<Unit>()
 
         Observable.interval(250, TimeUnit.MILLISECONDS, testScheduler)
