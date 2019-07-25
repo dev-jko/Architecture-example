@@ -1,6 +1,7 @@
 package com.nadarm.boardmvvmrx.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
+import com.nadarm.boardmvvmrx.AppSchedulers
 import com.nadarm.boardmvvmrx.domain.model.Article
 import com.nadarm.boardmvvmrx.domain.useCase.GetArticles
 import com.nadarm.boardmvvmrx.presentation.view.adapter.ArticleAdapter
@@ -24,16 +25,16 @@ interface ListViewModel {
 
     class ViewModelImpl @Inject constructor(
         private val getArticlesUseCase: GetArticles,
-        private val scheduler: Scheduler
+        private val schedulers: AppSchedulers
     ) : ViewModel(), Inputs, Outputs {
         private val articleClicked: PublishSubject<Article> = PublishSubject.create()
         private val newArticleClicked: PublishSubject<Unit> = PublishSubject.create()
 
         private val articles: Flowable<List<Article>> = this.getArticlesUseCase.execute(Unit)
         private val startDetailActivity: Observable<Article> =
-            articleClicked.throttleFirst(500, TimeUnit.MILLISECONDS, scheduler)
+            articleClicked.throttleFirst(500, TimeUnit.MILLISECONDS, schedulers.computation())
         private val startNewArticleActivity: Observable<Unit> =
-            newArticleClicked.throttleFirst(500, TimeUnit.MILLISECONDS, scheduler)
+            newArticleClicked.throttleFirst(500, TimeUnit.MILLISECONDS, schedulers.computation())
 
         val inputs: Inputs = this
         val outputs: Outputs = this

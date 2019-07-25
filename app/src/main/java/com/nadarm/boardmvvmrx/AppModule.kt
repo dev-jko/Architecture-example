@@ -16,9 +16,4 @@ class AppModule(private val application: Application) {
         return this.application
     }
 
-    @Provides
-    fun providesScheduler(): Scheduler {
-        return Schedulers.computation()
-    }
-
 }
