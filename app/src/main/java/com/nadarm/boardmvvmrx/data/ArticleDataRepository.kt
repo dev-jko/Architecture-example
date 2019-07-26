@@ -6,6 +6,7 @@ import com.nadarm.boardmvvmrx.domain.repository.ArticleRepository
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,20 +21,33 @@ class ArticleDataRepository @Inject constructor(
         val local = articleLocalDataSource.getAllArticles().subscribeOn(schedulers.io())
         val remote = articleRemoteDataSource.getAllArticles().subscribeOn(schedulers.io())
         return Flowable.concat(
-            local.takeUntil(remote).onErrorReturnItem(emptyList()),
-            remote.onErrorResumeNext(local)
-        ).distinctUntilChanged()
+            remote.retry(2).doOnNext {
+                articleLocalDataSource.deleteall
+                it.forEach { article -> articleLocalDataSource.insertArticle(article).subscribeOn(schedulers.io()) }
+            },
+
+        )
+            .distinctUntilChanged()
+            .subscribeOn(schedulers.io())
     }
 
     override fun getArticle(articleId: Long): Flowable<Article> {
-        // TODO add remote
-        return articleLocalDataSource.getArticle(articleId).subscribeOn(Schedulers.io())
+        val local = articleLocalDataSource.getArticle(articleId).subscribeOn(schedulers.io())
+        val remote = articleRemoteDataSource.getArticle(articleId).subscribeOn(schedulers.io())
+        return Flowable.concat(
+            local.take(1).timeout(500, TimeUnit.MILLISECONDS).onErrorReturnItem(Article(0, "", "")),
+            remote.retry(2)
+        )
+            .distinctUntilChanged()
+            .subscribeOn(schedulers.io())
     }
 
     override fun insertArticle(article: Article): Single<Long> {
-        // TODO
         return articleRemoteDataSource.insertArticle(article)
-//        return articleLocalDataSource.insertArticle(article).subscribeOn(Schedulers.io())
+            .retry(2)
+            .map { article.copy(articleId = it) }
+            .flatMap(articleLocalDataSource::insertArticle)
+            .subscribeOn(schedulers.io())
     }
 
     override fun updateArticle(article: Article): Single<Int> {

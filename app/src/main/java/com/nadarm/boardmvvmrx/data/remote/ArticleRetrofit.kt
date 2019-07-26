@@ -1,29 +1,43 @@
 package com.nadarm.boardmvvmrx.data.remote
 
 import com.nadarm.boardmvvmrx.data.model.ArticleData
-import com.nadarm.boardmvvmrx.data.remote.response.InsertArticleResponse
 import io.reactivex.Flowable
 import io.reactivex.Single
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
-object ArticleRetrofit {
-    private const val baseUrl = "https://android-crud-70d88.firebaseio.com/"
-
-    private val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl(this.baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-        .build()
-
-    private val service: ArticleService = retrofit.create(ArticleService::class.java)
+class ArticleRetrofit @Inject constructor(
+    private val service: ArticleService
+) {
 
     fun getAllArticles(): Flowable<List<ArticleData>> {
         return this.service.getAllArticles()
+            .map { it.articleDataList }
     }
 
-    fun insertArticle(articleData: ArticleData): Single<InsertArticleResponse> {
+    fun getArticle(articleId: Long): Flowable<ArticleData> {
+        return this.service.getArticle(articleId)
+            .map { it.articleData }
+    }
+
+    fun insertArticle(articleData: ArticleData): Single<Long> {
+        articleData.articleId = null
         return this.service.insertArticle(articleData)
+            .map { it.articleId }
+    }
+
+    fun updateArticle(articleData: ArticleData): Single<Int> {
+        if (articleData.articleId == null) {
+            // TODO throwable def
+            return Single.error(Throwable())
+        }
+        return this.service.updateArticle(articleData.articleId!!, articleData)
+    }
+
+    fun deleteArticle(articleData: ArticleData): Single<Int> {
+        if (articleData.articleId == null) {
+            // TODO throwable def
+            return Single.error(Throwable())
+        }
+        return this.service.deleteArticle(articleData.articleId!!)
     }
 }

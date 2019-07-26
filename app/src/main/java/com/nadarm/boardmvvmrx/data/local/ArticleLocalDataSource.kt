@@ -38,4 +38,8 @@ class ArticleLocalDataSource @Inject constructor(
         val data = mapper.mapToData(article)
         return articleDao.deleteArticle(data)
     }
+
+    fun deleteAll(): Single<Int> {
+        return articleDao.deleteAll()
+    }
 }

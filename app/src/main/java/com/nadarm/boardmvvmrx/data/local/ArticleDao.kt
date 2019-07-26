@@ -7,6 +7,7 @@ import androidx.room.Query
 import com.nadarm.boardmvvmrx.data.model.ArticleData
 import io.reactivex.Flowable
 import io.reactivex.Single
+import retrofit2.http.DELETE
 
 @Dao
 abstract class ArticleDao {
@@ -24,7 +25,7 @@ abstract class ArticleDao {
         return this.getArticle(articleId).distinctUntilChanged()
     }
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insertArticle(article: ArticleData): Single<Long>
 
     @Query("UPDATE articles SET title = :title, content = :content WHERE articleId = :articleId")
@@ -40,4 +41,7 @@ abstract class ArticleDao {
     fun deleteArticle(articleData: ArticleData): Single<Int> {
         return this.deleteArticle(articleData.articleId!!)
     }
+
+    @DELETE
+    abstract fun deleteAll(): Single<Int>
 }
