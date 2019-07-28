@@ -1,4 +1,4 @@
-# Architecture
+# Architecture example
 
 ## Technologies Used
 
