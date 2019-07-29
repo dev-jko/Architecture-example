@@ -6,7 +6,9 @@ import com.nadarm.boardmvvmrx.domain.model.Article
 import io.reactivex.Flowable
 import io.reactivex.Single
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ArticleRemoteDataSource @Inject constructor(
     private val articleRetrofit: ArticleRetrofit,
     private val mapper: ArticleDataMapper

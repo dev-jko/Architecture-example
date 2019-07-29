@@ -39,7 +39,7 @@ class ArticleLocalDataSource @Inject constructor(
         return articleDao.deleteArticle(data)
     }
 
-    fun deleteAll(): Single<Int> {
+    override fun deleteAll(): Single<Int> {
         return articleDao.deleteAll()
     }
 }

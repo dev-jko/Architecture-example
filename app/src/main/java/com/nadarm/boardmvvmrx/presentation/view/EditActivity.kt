@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import com.nadarm.boardmvvmrx.AndroidApplication
 import com.nadarm.boardmvvmrx.AppModule
 import com.nadarm.boardmvvmrx.DaggerAppComponent
 import com.nadarm.boardmvvmrx.R
@@ -33,10 +34,7 @@ class EditActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        DaggerAppComponent.builder()
-            .appModule(AppModule(application))
-            .dataSourceModule(DataSourceModule())
-            .build()
+        (application as AndroidApplication).getAppComponent()
             .inject(this)
 
         val detailVm = ViewModelProviders.of(this, viewModelFactory).get(DetailViewModel.ViewModelImpl::class.java)

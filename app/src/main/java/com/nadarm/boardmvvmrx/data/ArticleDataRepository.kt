@@ -6,55 +6,60 @@ import com.nadarm.boardmvvmrx.domain.repository.ArticleRepository
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ArticleDataRepository @Inject constructor(
-    private val articleLocalDataSource: ArticleDataSource.Local,
+//    private val articleLocalDataSource: ArticleDataSource.Local,
+    private val articleCacheDataSource: ArticleDataSource.Cache,
     private val articleRemoteDataSource: ArticleDataSource.Remote,
     private val schedulers: AppSchedulers
 ) : ArticleRepository {
 
     override fun getAllArticles(): Flowable<List<Article>> {
-        val local = articleLocalDataSource.getAllArticles().subscribeOn(schedulers.io())
-        val remote = articleRemoteDataSource.getAllArticles().subscribeOn(schedulers.io())
-        return Flowable.concat(
-            local.take(1),
-            remote.retry(2)
-        )
-            .distinctUntilChanged()
-            .subscribeOn(schedulers.io())
+        return if (articleCacheDataSource.isFresh()) {
+            articleCacheDataSource.getAllArticles().subscribeOn(schedulers.io())
+        } else {
+            articleRemoteDataSource.getAllArticles()
+                .retry(2)
+                .doOnNext(articleCacheDataSource::insertAll)
+                .subscribeOn(schedulers.io())
+        }
     }
 
     override fun getArticle(articleId: Long): Flowable<Article> {
-        val local = articleLocalDataSource.getArticle(articleId).subscribeOn(schedulers.io())
-        val remote = articleRemoteDataSource.getArticle(articleId).subscribeOn(schedulers.io())
-        return Flowable.concat(
-            local.take(1).timeout(500, TimeUnit.MILLISECONDS).onErrorReturnItem(Article(0, "", "")),
-            remote.retry(2)
-        )
-            .distinctUntilChanged()
-            .subscribeOn(schedulers.io())
+        return if (articleCacheDataSource.isFresh(articleId)) {
+            articleCacheDataSource.getArticle(articleId).subscribeOn(schedulers.io())
+        } else {
+            articleRemoteDataSource.getArticle(articleId)
+                .retry(2)
+                .doOnNext { articleCacheDataSource.updateArticle(it) }
+                .subscribeOn(schedulers.io())
+        }.subscribeOn(schedulers.io())
     }
 
     override fun insertArticle(article: Article): Single<Long> {
         return articleRemoteDataSource.insertArticle(article)
             .retry(2)
             .map { article.copy(articleId = it) }
-            .flatMap(articleLocalDataSource::insertArticle)
+            .doAfterSuccess { articleCacheDataSource.insertArticle(it) }
+            .map { it.articleId }
             .subscribeOn(schedulers.io())
     }
 
     override fun updateArticle(article: Article): Single<Int> {
-        // TODO add remote
-        return articleLocalDataSource.updateArticle(article).subscribeOn(Schedulers.io())
+        return articleRemoteDataSource.updateArticle(article)
+            .retry(2)
+            .doAfterSuccess { articleCacheDataSource.updateArticle(article) }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun deleteArticle(article: Article): Single<Int> {
-        // TODO add remote
-        return articleLocalDataSource.deleteArticle(article).subscribeOn(Schedulers.io())
+        return articleRemoteDataSource.deleteArticle(article)
+            .retry(2)
+            .doOnSuccess { articleCacheDataSource.deleteArticle(article) }
+            .subscribeOn(Schedulers.io())
     }
 
 }

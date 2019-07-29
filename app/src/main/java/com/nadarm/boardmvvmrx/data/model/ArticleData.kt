@@ -2,6 +2,7 @@ package com.nadarm.boardmvvmrx.data.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
@@ -22,6 +23,8 @@ data class ArticleData(
     @SerializedName("articleId")
     var articleId: Long? = null
 
+    @Ignore
+    var updatedAt: Long? = null
 
     constructor(articleId: Long, title: String, content: String) : this(title, content) {
         this.articleId = articleId
