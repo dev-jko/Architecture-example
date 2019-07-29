@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">BoardMVVMrx</string>
+    <string name="ApiBaseUrl">https://test.nadarm.com/api/</string>
 </resources>

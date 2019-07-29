@@ -1,9 +1,13 @@
 package com.nadarm.boardmvvmrx.data.local
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.nadarm.boardmvvmrx.data.model.ArticleData
 import io.reactivex.Flowable
 import io.reactivex.Single
+import retrofit2.http.DELETE
 
 @Dao
 abstract class ArticleDao {
@@ -21,12 +25,23 @@ abstract class ArticleDao {
         return this.getArticle(articleId).distinctUntilChanged()
     }
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insertArticle(article: ArticleData): Single<Long>
 
-    @Update
-    abstract fun updateArticle(article: ArticleData): Single<Int>
+    @Query("UPDATE articles SET title = :title, content = :content WHERE articleId = :articleId")
+    protected abstract fun updateArticle(articleId: Long, title: String, content: String): Single<Int>
 
-    @Delete
-    abstract fun deleteArticle(article: ArticleData): Single<Int>
+    fun updateArticle(articleData: ArticleData): Single<Int> {
+        return this.updateArticle(articleData.articleId!!, articleData.title, articleData.content)
+    }
+
+    @Query("DELETE FROM articles WHERE articleId = :articleId")
+    protected abstract fun deleteArticle(articleId: Long): Single<Int>
+
+    fun deleteArticle(articleData: ArticleData): Single<Int> {
+        return this.deleteArticle(articleData.articleId!!)
+    }
+
+    @Query("DELETE FROM articles")
+    abstract fun deleteAll(): Single<Int>
 }

@@ -3,10 +3,10 @@ package com.nadarm.boardmvvmrx.data.model.mapper
 import com.nadarm.boardmvvmrx.data.model.ArticleData
 import com.nadarm.boardmvvmrx.domain.model.Article
 
-object ArticleLocalMapper {
+object ArticleDataMapper {
 
     fun mapFromData(articleData: ArticleData): Article = Article(
-        articleData.articleId,
+        articleData.articleId!!,
         articleData.title,
         articleData.content
     )

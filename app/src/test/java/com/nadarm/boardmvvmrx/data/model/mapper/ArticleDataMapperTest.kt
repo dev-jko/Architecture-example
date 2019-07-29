@@ -6,9 +6,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-class ArticleLocalMapperTest {
+class ArticleDataMapperTest {
 
-    private lateinit var mapper: ArticleLocalMapper
+    private lateinit var mapper: ArticleDataMapper
     private val title1 = "title1"
     private val title2 = "title2"
     private val content1 = "content1"
@@ -16,7 +16,7 @@ class ArticleLocalMapperTest {
 
     @Before
     fun setUp() {
-        mapper = ArticleLocalMapper
+        mapper = ArticleDataMapper
     }
 
     @Test

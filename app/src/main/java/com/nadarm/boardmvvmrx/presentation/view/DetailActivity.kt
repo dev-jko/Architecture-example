@@ -82,7 +82,6 @@ class DetailActivity : AppCompatActivity() {
 
     private fun startEditActivity(articleId: Long) {
         val intent = Intent(this, EditActivity::class.java)
-        println(articleId)
         intent.putExtra("articleId", articleId)
         startActivity(intent)
     }
