@@ -42,6 +42,6 @@ abstract class ArticleDao {
         return this.deleteArticle(articleData.articleId!!)
     }
 
-    @DELETE
+    @Query("DELETE FROM articles")
     abstract fun deleteAll(): Single<Int>
 }

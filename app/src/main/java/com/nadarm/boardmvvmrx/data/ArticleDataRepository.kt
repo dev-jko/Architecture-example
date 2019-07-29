@@ -21,11 +21,8 @@ class ArticleDataRepository @Inject constructor(
         val local = articleLocalDataSource.getAllArticles().subscribeOn(schedulers.io())
         val remote = articleRemoteDataSource.getAllArticles().subscribeOn(schedulers.io())
         return Flowable.concat(
-            remote.retry(2).doOnNext {
-                articleLocalDataSource.deleteall
-                it.forEach { article -> articleLocalDataSource.insertArticle(article).subscribeOn(schedulers.io()) }
-            },
-
+            local.take(1),
+            remote.retry(2)
         )
             .distinctUntilChanged()
             .subscribeOn(schedulers.io())
