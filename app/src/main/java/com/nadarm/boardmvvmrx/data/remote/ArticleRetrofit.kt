@@ -4,7 +4,9 @@ import com.nadarm.boardmvvmrx.data.model.ArticleData
 import io.reactivex.Flowable
 import io.reactivex.Single
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ArticleRetrofit @Inject constructor(
     private val service: ArticleService
 ) {
@@ -21,6 +23,7 @@ class ArticleRetrofit @Inject constructor(
 
     fun insertArticle(articleData: ArticleData): Single<Long> {
         articleData.articleId = null
+        articleData.updatedAt = null
         return this.service.insertArticle(articleData)
             .map { it.articleId }
     }
@@ -30,6 +33,7 @@ class ArticleRetrofit @Inject constructor(
             // TODO throwable def
             return Single.error(Throwable())
         }
+        articleData.updatedAt = null
         return this.service.updateArticle(articleData.articleId!!, articleData)
     }
 
